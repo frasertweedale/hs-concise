@@ -20,28 +20,19 @@ import Control.Lens.Cons.Extras
 
 main :: IO ()
 main = defaultMain $ testGroup "Properties"
-  [ testProperty "[a] -> [a]" (prop_id :: String -> Bool)
-  , testProperty "T -> T" (prop_id :: T.Text -> Bool)
-  , testProperty "TL -> TL" (prop_id :: TL.Text -> Bool)
-  , testProperty "B -> B" (prop_id :: B.ByteString -> Bool)
-  , testProperty "L -> L" (prop_id :: L.ByteString -> Bool)
-  , testProperty "Str -> T -> Str" (prop_roundtrip (Proxy :: Proxy T.Text) :: String -> Bool)
-  , testProperty "Str -> TL -> Str" (prop_roundtrip (Proxy :: Proxy TL.Text) :: String -> Bool)
-  , testProperty "T -> TL -> T" (prop_roundtrip (Proxy :: Proxy TL.Text) :: T.Text -> Bool)
-  , testProperty "[W8] -> L -> [W8]" (prop_roundtrip (Proxy :: Proxy L.ByteString) :: [Word8] -> Bool)
-  , testProperty "[W8] -> B -> [W8]" (prop_roundtrip (Proxy :: Proxy B.ByteString) :: [Word8] -> Bool)
-  , testProperty "B -> L -> B" (prop_roundtrip (Proxy :: Proxy L.ByteString) :: B.ByteString -> Bool)
-  , testProperty "[a] -> List a -> [a]" (prop_roundtrip (Proxy :: Proxy (List Int)) :: [Int] -> Bool)
+  [ testProperty "[a] -> [a]" (\s -> view recons (s :: String) == s)
+  , testProperty "T -> T" (\s -> view recons (s :: T.Text) == s)
+  , testProperty "TL -> TL" (\s -> view recons (s :: TL.Text) == s)
+  , testProperty "B -> B" (\s -> view recons (s :: B.ByteString) == s)
+  , testProperty "L -> L" (\s -> view recons (s :: L.ByteString) == s)
+  , testProperty "Str -> T -> Str" (\s -> view recons (view recons (s :: String) :: T.Text) == s)
+  , testProperty "Str -> TL -> Str" (\s -> view recons (view recons (s :: String) :: TL.Text) == s)
+  , testProperty "T -> TL -> T" (\s -> view recons (view recons (s :: T.Text) :: TL.Text) == s)
+  , testProperty "[W8] -> B -> [W8]" (\s -> view recons (view recons (s :: [Word8]) :: B.ByteString) == s)
+  , testProperty "[W8] -> L -> [W8]" (\s -> view recons (view recons (s :: [Word8]) :: L.ByteString) == s)
+  , testProperty "B -> L -> B" (\s -> view recons (view recons (s :: B.ByteString) :: L.ByteString) == s)
+  , testProperty "[a] -> List a -> [a]" (\s -> view recons (view recons (s :: [Int]) :: List Int) == s)
   ]
-
-prop_id :: (Cons s s a a, Monoid s, Eq s) => s -> Bool
-prop_id s = view recons s == s
-
-prop_roundtrip
-  :: forall s1 s2 a. (Cons s1 s1 a a, Cons s2 s2 a a, Monoid s1, Monoid s2, Eq s1)
-  => Proxy s2 -> s1 -> Bool
-prop_roundtrip _ s1 = view recons (view recons s1 :: s2) == s1
-
 
 -- Let's implement a type *without* rewrite rules to ensure that the
 -- default implementation is correct
