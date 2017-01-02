@@ -2,6 +2,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+{-# OPTIONS_GHC -ddump-rule-rewrites #-}
+
 import Data.Proxy
 import Data.Word (Word8)
 
