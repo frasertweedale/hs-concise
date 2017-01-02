@@ -4,10 +4,10 @@
 
 {-# OPTIONS_GHC -ddump-rule-rewrites #-}
 
-import Data.Proxy
+import Data.Monoid (Monoid(..))
 import Data.Word (Word8)
 
-import Control.Lens
+import Control.Lens (Cons(..), prism, view)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Text as T

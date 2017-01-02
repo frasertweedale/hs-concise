@@ -28,13 +28,20 @@
 -- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 -- OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Control.Lens.Cons.Extras
   (
     recons
   , unfoldr
   ) where
 
+import Data.Function ((.), id)
+import Data.Monoid (Monoid(..))
+import Data.Maybe (Maybe, maybe)
+import Data.String (String)
 import Data.Word (Word8)
+
 import Control.Lens.Cons (Cons, cons, uncons)
 import Control.Lens.Iso (Iso', iso, lazy, strict)
 import qualified Data.ByteString as B
