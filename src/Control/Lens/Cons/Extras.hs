@@ -35,12 +35,13 @@ module Control.Lens.Cons.Extras
   ) where
 
 import Data.Word (Word8)
-import Control.Lens
+import Control.Lens.Cons (Cons, cons, uncons)
+import Control.Lens.Iso (Iso', iso, lazy, strict)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
-import Data.ByteString.Lens (packedBytes)
+import Data.ByteString.Lens (packedBytes, unpackedBytes)
 import qualified Data.Text as T
-import Data.Text.Lens (packed)
+import Data.Text.Lens (packed, unpacked)
 import qualified Data.Text.Lazy as TL
 
 {-# NOINLINE [2] recons #-}
@@ -52,32 +53,20 @@ unfoldr f = maybe mempty (\(a, s') -> cons a (unfoldr f s')) . f
 
 {-# RULES "recons/id" recons = id #-}
 
-{-# RULES "recons/string-text" recons = reconsStringText #-}
-{-# RULES "recons/text-string" recons = from reconsStringText #-}
-reconsStringText :: Iso' String T.Text
-reconsStringText = packed
+{-# RULES "recons/string-text" recons = packed :: Iso' String T.Text #-}
+{-# RULES "recons/text-string" recons = unpacked :: Iso' T.Text String #-}
 
-{-# RULES "recons/string-lazytext" recons = reconsStringLazyText #-}
-{-# RULES "recons/lazytext-string" recons = from reconsStringLazyText #-}
-reconsStringLazyText :: Iso' String TL.Text
-reconsStringLazyText = packed
+{-# RULES "recons/string-lazytext" recons = packed :: Iso' String TL.Text #-}
+{-# RULES "recons/lazytext-string" recons = unpacked :: Iso' TL.Text String #-}
 
-{-# RULES "recons/text-strict" recons = reconsStrictText #-}
-{-# RULES "recons/text-lazy" recons = from reconsStrictText #-}
-reconsStrictText :: Iso' TL.Text T.Text
-reconsStrictText = strict
+{-# RULES "recons/text-strict" recons = strict :: Iso' TL.Text T.Text #-}
+{-# RULES "recons/text-lazy" recons = lazy :: Iso' T.Text TL.Text #-}
 
-{-# RULES "recons/list-bs" recons = reconsListByteString #-}
-{-# RULES "recons/bs-list" recons = from reconsListByteString #-}
-reconsListByteString :: Iso' [Word8] B.ByteString
-reconsListByteString = packedBytes
+{-# RULES "recons/list-bs" recons = packedBytes :: Iso' [Word8] B.ByteString #-}
+{-# RULES "recons/bs-list" recons = unpackedBytes :: Iso' B.ByteString [Word8] #-}
 
-{-# RULES "recons/list-lazybs" recons = reconsListLazyByteString #-}
-{-# RULES "recons/lazybs-list" recons = from reconsListLazyByteString #-}
-reconsListLazyByteString :: Iso' [Word8] L.ByteString
-reconsListLazyByteString = packedBytes
+{-# RULES "recons/list-lazybs" recons = packedBytes :: Iso' [Word8] L.ByteString #-}
+{-# RULES "recons/lazybs-list" recons = unpackedBytes :: Iso' L.ByteString [Word8] #-}
 
-{-# RULES "recons/bs-strict" recons = reconsStrictText #-}
-{-# RULES "recons/bs-lazy" recons = from reconsStrictByteString #-}
-reconsStrictByteString :: Iso' L.ByteString B.ByteString
-reconsStrictByteString = strict
+{-# RULES "recons/bs-strict" recons = strict :: Iso' L.ByteString B.ByteString #-}
+{-# RULES "recons/bs-lazy" recons = lazy :: Iso' B.ByteString L.ByteString #-}
