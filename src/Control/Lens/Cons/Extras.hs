@@ -36,14 +36,17 @@ module Control.Lens.Cons.Extras
   , unfoldr
   ) where
 
-import Data.Function ((.), id)
-import Data.Monoid (Monoid(..))
-import Data.Maybe (Maybe, maybe)
+import Data.Function (id)
+import Data.Maybe (Maybe)
 import Data.String (String)
 import Data.Word (Word8)
 
+import Control.Lens
+import Control.Lens ((#))
 import Control.Lens.Cons (Cons, cons, uncons)
-import Control.Lens.Iso (Iso', iso, lazy, strict)
+import Control.Lens.Empty (AsEmpty(..))
+import Control.Lens.Fold (foldrOf, unfolded)
+import Control.Lens.Iso (lazy, strict)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
 import Data.ByteString.Lens (packedBytes, unpackedBytes)
@@ -52,37 +55,37 @@ import Data.Text.Lens (packed, unpacked)
 import qualified Data.Text.Lazy as TL
 
 {-# NOINLINE [2] recons #-}
-recons :: (Cons s1 s1 a a, Cons s2 s2 a a, Monoid s1, Monoid s2) => Iso' s1 s2
-recons = iso (unfoldr uncons) (unfoldr uncons)
+recons :: (Cons s1 s1 a a, Cons s2 s2 a a, AsEmpty s2) => Getter s1 s2
+recons = to (unfoldr uncons)
 
-unfoldr :: (Cons s2 s2 a a, Monoid s2) => (s1 -> Maybe (a, s1)) -> s1 -> s2
-unfoldr f = maybe mempty (\(a, s') -> cons a (unfoldr f s')) . f
+unfoldr :: (Cons s2 s2 a a, AsEmpty s2) => (s1 -> Maybe (a, s1)) -> s1 -> s2
+unfoldr f = foldrOf (unfolded f) cons (_Empty # ())
 
 {-# RULES
 "recons/id"
   recons = id
 "recons/string-text"
-  recons = packed :: Iso' String T.Text
+  recons = packed :: Getter String T.Text
 "recons/text-string"
-  recons = unpacked :: Iso' T.Text String
+  recons = unpacked :: Getter T.Text String
 "recons/string-lazytext"
-  recons = packed :: Iso' String TL.Text
+  recons = packed :: Getter String TL.Text
 "recons/lazytext-string"
-  recons = unpacked :: Iso' TL.Text String
+  recons = unpacked :: Getter TL.Text String
 "recons/text-strict"
-  recons = strict :: Iso' TL.Text T.Text
+  recons = strict :: Getter TL.Text T.Text
 "recons/text-lazy"
-  recons = lazy :: Iso' T.Text TL.Text
+  recons = lazy :: Getter T.Text TL.Text
 "recons/list-bs"
-  recons = packedBytes :: Iso' [Word8] B.ByteString
+  recons = packedBytes :: Getter [Word8] B.ByteString
 "recons/bs-list"
-  recons = unpackedBytes :: Iso' B.ByteString [Word8]
+  recons = unpackedBytes :: Getter B.ByteString [Word8]
 "recons/list-lazybs"
-  recons = packedBytes :: Iso' [Word8] L.ByteString
+  recons = packedBytes :: Getter [Word8] L.ByteString
 "recons/lazybs-list"
-  recons = unpackedBytes :: Iso' L.ByteString [Word8]
+  recons = unpackedBytes :: Getter L.ByteString [Word8]
 "recons/bs-strict"
-  recons = strict :: Iso' L.ByteString B.ByteString
+  recons = strict :: Getter L.ByteString B.ByteString
 "recons/bs-lazy"
-  recons = lazy :: Iso' B.ByteString L.ByteString ;
+  recons = lazy :: Getter B.ByteString L.ByteString
  #-}

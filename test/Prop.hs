@@ -4,10 +4,9 @@
 
 {-# OPTIONS_GHC -ddump-rule-rewrites #-}
 
-import Data.Monoid (Monoid(..))
 import Data.Word (Word8)
 
-import Control.Lens (Cons(..), prism, view)
+import Control.Lens (AsEmpty(..), Cons(..), prism, view)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Text as T
@@ -42,10 +41,11 @@ main = defaultMain $ testGroup "Properties"
 data List a = Nil | Cons a (List a)
   deriving (Eq)
 
-instance Monoid (List a) where
-  mempty = Nil
-  mappend Nil ys = ys
-  Cons x xs `mappend` ys = Cons x (xs `mappend` ys)
+instance AsEmpty (List a) where
+  _Empty = prism (const Nil) f
+    where
+      f Nil = Right ()
+      f xs = Left xs
 
 instance Cons (List a) (List b) a b where
   _Cons = prism (uncurry Cons) f
