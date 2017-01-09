@@ -58,22 +58,31 @@ recons = iso (unfoldr uncons) (unfoldr uncons)
 unfoldr :: (Cons s2 s2 a a, Monoid s2) => (s1 -> Maybe (a, s1)) -> s1 -> s2
 unfoldr f = maybe mempty (\(a, s') -> cons a (unfoldr f s')) . f
 
-{-# RULES "recons/id" recons = id #-}
-
-{-# RULES "recons/string-text" recons = packed :: Iso' String T.Text #-}
-{-# RULES "recons/text-string" recons = unpacked :: Iso' T.Text String #-}
-
-{-# RULES "recons/string-lazytext" recons = packed :: Iso' String TL.Text #-}
-{-# RULES "recons/lazytext-string" recons = unpacked :: Iso' TL.Text String #-}
-
-{-# RULES "recons/text-strict" recons = strict :: Iso' TL.Text T.Text #-}
-{-# RULES "recons/text-lazy" recons = lazy :: Iso' T.Text TL.Text #-}
-
-{-# RULES "recons/list-bs" recons = packedBytes :: Iso' [Word8] B.ByteString #-}
-{-# RULES "recons/bs-list" recons = unpackedBytes :: Iso' B.ByteString [Word8] #-}
-
-{-# RULES "recons/list-lazybs" recons = packedBytes :: Iso' [Word8] L.ByteString #-}
-{-# RULES "recons/lazybs-list" recons = unpackedBytes :: Iso' L.ByteString [Word8] #-}
-
-{-# RULES "recons/bs-strict" recons = strict :: Iso' L.ByteString B.ByteString #-}
-{-# RULES "recons/bs-lazy" recons = lazy :: Iso' B.ByteString L.ByteString #-}
+{-# RULES
+"recons/id"
+  recons = id
+"recons/string-text"
+  recons = packed :: Iso' String T.Text
+"recons/text-string"
+  recons = unpacked :: Iso' T.Text String
+"recons/string-lazytext"
+  recons = packed :: Iso' String TL.Text
+"recons/lazytext-string"
+  recons = unpacked :: Iso' TL.Text String
+"recons/text-strict"
+  recons = strict :: Iso' TL.Text T.Text
+"recons/text-lazy"
+  recons = lazy :: Iso' T.Text TL.Text
+"recons/list-bs"
+  recons = packedBytes :: Iso' [Word8] B.ByteString
+"recons/bs-list"
+  recons = unpackedBytes :: Iso' B.ByteString [Word8]
+"recons/list-lazybs"
+  recons = packedBytes :: Iso' [Word8] L.ByteString
+"recons/lazybs-list"
+  recons = unpackedBytes :: Iso' L.ByteString [Word8]
+"recons/bs-strict"
+  recons = strict :: Iso' L.ByteString B.ByteString
+"recons/bs-lazy"
+  recons = lazy :: Iso' B.ByteString L.ByteString ;
+ #-}
