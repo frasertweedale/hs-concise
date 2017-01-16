@@ -46,6 +46,7 @@ import Control.Lens ((#))
 import Control.Lens.Cons (Cons, cons, uncons)
 import Control.Lens.Empty (AsEmpty(..))
 import Control.Lens.Fold (foldrOf, unfolded)
+
 import Control.Lens.Iso (lazy, strict)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
@@ -54,10 +55,24 @@ import qualified Data.Text as T
 import Data.Text.Lens (packed, unpacked)
 import qualified Data.Text.Lazy as TL
 
+-- | Convert one type with a 'Cons' instance into the other.
+--
+-- Rewrite rules are provided for efficient conversion between
+-- 'String' and 'Text', '[Word8]' and 'ByteString', and lazy and
+-- strict 'Text' and 'ByteString'.  Programs must be compiled
+-- with '-O' to use them.
+--
+-- Although the type does not prove it, if '(recons . recons)'
+-- exists it should obey:
+--
+-- > recons . recons ≡ id
+--
 {-# NOINLINE [2] recons #-}
 recons :: (Cons s1 s1 a a, Cons s2 s2 a a, AsEmpty s2) => Getter s1 s2
 recons = to (unfoldr uncons)
 
+-- | > unfoldr f = foldrOf (unfolded f) cons (_Empty # ())
+--
 unfoldr :: (Cons s2 s2 a a, AsEmpty s2) => (s1 -> Maybe (a, s1)) -> s1 -> s2
 unfoldr f = foldrOf (unfolded f) cons (_Empty # ())
 
