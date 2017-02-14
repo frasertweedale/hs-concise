@@ -58,11 +58,11 @@ import qualified Data.Text.Lazy as TL
 -- | Convert one type with a 'Cons' instance into the other.
 --
 -- Rewrite rules are provided for efficient conversion between
--- 'String' and 'Text', '[Word8]' and 'ByteString', and lazy and
+-- 'String' and 'Text', @['Word8']@ and 'ByteString', and lazy and
 -- strict 'Text' and 'ByteString'.  Programs must be compiled
--- with '-O' to use them.
+-- with @-O@ to use them.
 --
--- Although the type does not prove it, if '(recons . recons)'
+-- Although the type does not prove it, if @(recons . recons)@
 -- exists it should obey:
 --
 -- > recons . recons ≡ id
