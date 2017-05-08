@@ -5,8 +5,8 @@ description:
   concise provides a handful of functions to extend what you can
   do with Control.Lens.Cons.
 
-homepage:            https://github.com/frasertweedal/hs-concise
-bug-reports:         https://github.com/frasertweedal/hs-concise/issues
+homepage:            https://github.com/frasertweedale/hs-concise
+bug-reports:         https://github.com/frasertweedale/hs-concise/issues
 license:             BSD3
 license-file:        LICENSE
 author:              Fraser Tweedale
