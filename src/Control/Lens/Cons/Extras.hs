@@ -67,7 +67,7 @@ import qualified Data.Text.Lazy as TL
 --
 -- > recons . recons ≡ id
 --
-{-# NOINLINE [2] recons #-}
+{-# NOINLINE recons #-}
 recons :: (Cons s1 s1 a a, Cons s2 s2 a a, AsEmpty s2) => Getter s1 s2
 recons = to (unfoldr uncons)
 
