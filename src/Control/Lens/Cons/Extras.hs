@@ -67,6 +67,11 @@ import qualified Data.Text.Lazy as TL
 --
 -- > recons . recons ≡ id
 --
+-- The @NOINLINE@ pragma is used to ensure that @recons@ does not
+-- get inlined into function that are polymorphic in @s1@ or @s2@.
+-- Such functions should use the @INLINE@ pragma to give rewrite
+-- rules the best chance of firing.
+--
 {-# NOINLINE recons #-}
 recons :: (Cons s1 s1 a a, Cons s2 s2 a a, AsEmpty s2) => Getter s1 s2
 recons = to (unfoldr uncons)
