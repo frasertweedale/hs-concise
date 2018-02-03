@@ -1,5 +1,5 @@
 name:                concise
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Utilities for Control.Lens.Cons
 description:
   concise provides a handful of functions to extend what you can
