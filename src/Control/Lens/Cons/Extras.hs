@@ -42,7 +42,6 @@ import Data.String (String)
 import Data.Word (Word8)
 
 import Control.Lens
-import Control.Lens ((#))
 import Control.Lens.Cons (Cons, cons, uncons)
 import Control.Lens.Empty (AsEmpty(..))
 import Control.Lens.Fold (foldrOf, unfolded)
